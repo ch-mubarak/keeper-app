@@ -1,44 +1,59 @@
 import React, { useState } from "react";
+import AddIcon from '@mui/icons-material/Add';
+import Fab from '@mui/material/Fab';
+import Zoom from '@mui/material/Zoom';
 
 function CreateArea(props) {
-
+  const [isPenDown, setIsPenDown] = useState(false)
   const [note, setNote] = useState({
     title: "",
     content: ""
-  })
+  });
+
+  function handleClick() {
+    setIsPenDown(true)
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setNote(prevValue => {
+    setNote(prevNote => {
       return {
-        ...prevValue,
+        ...prevNote,
         [name]: value
-      }
-    })
+      };
+    });
   }
 
   function submitNote(event) {
-    event.preventDefault()
-    props.onAdd(note)
+    props.onAdd(note);
     setNote({
       title: "",
       content: ""
-    })
+    });
+    setIsPenDown(false)
+    event.preventDefault();
   }
 
   return (
     <div>
-      <form onSubmit={() => props.onAdd(note)}>
-        <input name="title"
+      <form className="create-note">
+        {isPenDown && <input
+          name="title"
           onChange={handleChange}
           value={note.title}
-          placeholder="Title" />
-        <textarea name="content"
+          placeholder="Title"
+        />}
+        <textarea
+          name="content"
           onChange={handleChange}
+          onClick={handleClick}
           value={note.content}
           placeholder="Take a note..."
-          rows="3" />
-        <button onClick={submitNote}>Add</button>
+          rows={isPenDown ? "3" : "1"}
+        />
+        {isPenDown && <Zoom in={true}>
+          <Fab onClick={submitNote}><AddIcon /></Fab>
+        </Zoom>}
       </form>
     </div>
   );
